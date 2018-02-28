@@ -1,0 +1,64 @@
+Things to note:
+  Rating.rating() is where it analyzes the possition, the deeper the depth, the lower the rating 
+  as it might not be so accurate?(should probably change that, don't know why that was set as such)
+  public static int rating(int list,int depth){
+		int counter=0; 
+		int material=rateMaterial();
+		counter+=rateAttack();
+		counter+=rateMoveability();
+		counter+=material;
+		counter+=ratePositional(material);
+		Chess.flipBoard();
+		material=rateMaterial();
+		counter-=rateAttack();
+		counter-=rateMoveability();
+		counter-=material;
+		counter-=ratePositional(material);
+		Chess.flipBoard();
+		return -(counter+depth*50);
+	}  
+  flipBoard was required as the way the pawns moved was defined in one way and they technically move two different ways depending on color.
+  We won't require that.
+public static String alphaBeta(int depth, int beta, int alpha, String move, int player){
+		String list = possibleMoves();
+		if(depth == 0 || list.length() == 0){
+			return move + (Rating.rating(list.length(),depth) * (player*2-1)); 
+		}
+		//sort later
+		player = 1-player;
+		for(int i = 0; i<list.length();i+=5){
+			makeMove(list.substring(i, i+5));
+			flipBoard();
+			String returnString = alphaBeta(depth-1, beta, alpha, list.substring(i, i+5), player);
+			int value = Integer.valueOf(returnString.substring(5));
+			flipBoard();
+			undoMove(list.substring(i, i+5));
+			if(player == 0){
+				if(value<=beta) {
+					beta = value;
+					if(depth == GLOBAL_DEPTH){
+						move = returnString.substring(0, 5);
+					}
+				}
+			} else {
+				if(value>alpha) {
+					alpha = value;
+					if(depth == GLOBAL_DEPTH){
+						move = returnString.substring(0, 5);
+					}
+				}
+			}
+			if(alpha >= beta){
+				if(player == 0){
+					return move+beta;
+				} else{
+					return move+alpha;
+				}
+			}
+		}
+		if(player == 0){
+			return move+beta;
+		} else{
+			return move+alpha;
+		}
+	}
