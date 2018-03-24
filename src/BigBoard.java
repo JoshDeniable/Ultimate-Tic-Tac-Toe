@@ -10,4 +10,26 @@ public class BigBoard {
             }
         }
     }
+
+    public boolean makeMove(PLAYER player, int row, int col){
+        int smallBoardRow = row / 3;
+	int smallBoardCol = col / 3;
+	int smallBoardCellRow = row % 3;
+	int smallBoardCellCol = col % 3;
+	Board smallBoard = bigBoard[smallBoardRow][smallBoardCol];
+	smallBoard = smallBoard.makeMove(player, smallBoardCellRow, smallBoardCellCol);
+        if(smallBoard = null){
+	    return false; //unsuccessful
+	}
+	bigBoard[smallBoardRow][smallBoardCol] = smallBoard;
+	return true; //successful
+    }
+
+    public void undoMove(int row, int col){
+        int smallBoardRow = row / 3;
+	int smallBoardCol = col / 3;
+	int smallBoardCellRow = row % 3;
+	int smallBoardCellCol = col % 3;
+        bigBoard[smallBoardRow][smallBoardCol].undoMove[smallBoardCellRow][smallBoardCellCol];
+    }
 }

@@ -54,4 +54,26 @@ public class Board {
             setWinner(PLAYER.TIE);
         }
     }
+
+    public Board makeMove(PLAYER move, int row, int col){
+    	if(winner == PLAYER.NONE){
+	    if(board[row][col] == PLAYER.NONE){
+		board[row][col] = move;
+	        checkWin();
+                moveCount++;
+	    } else {
+	    	return null; //couldn't make the move as someone had already played there
+	    }
+	}else{
+	    return null; //couldn't make the move as there is already a winner at this board
+	}
+	return this;
+    }
+
+    public Board undoMove(int row, int col){
+        winner = PLAYER.NONE;
+        board[row][col] = PLAYER.NONE;
+	moveCount--;
+	return this;
+    }
 }
