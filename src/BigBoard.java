@@ -33,7 +33,7 @@ public class BigBoard {
         bigBoard[smallBoardRow][smallBoardCol].undoMove[smallBoardCellRow][smallBoardCellCol];
     }
 	
-	public void checkWin(){
+	public PLAYER checkWin(){
 		//check diagonals
 		if ((bigBoard[0][0].getWinner() == bigBoard[1][1].getWinner() && bigBoard[1][1].getWinner() == bigBoard[2][2].getWinner()) 
 			|| (bigBoard[0][2].getWinner() == bigBoard[1][1].getWinner() && bigBoard[1][1].getWinner() == bigBoard[2][0].getWinner())) {
