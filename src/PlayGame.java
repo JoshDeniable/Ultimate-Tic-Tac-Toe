@@ -4,7 +4,7 @@ import java.io.*;
 public class PlayGame {
     private static BigBoard gameBoard;
     private static String lastMove;
-    private static final int GLOBAL_DEPTH = 6;
+    private static final int GLOBAL_DEPTH = 6; // Test depths on both PC and Laptop (try to get to 20ish)
     private static BufferedReader stdin = new BufferedReader (new InputStreamReader(System.in));
 
     public PlayGame() {
@@ -17,27 +17,32 @@ public class PlayGame {
         System.out.println("1. Start New Game");
         System.out.println("2. Read Rules");
         System.out.println("3. Exit Game\n");
-        System.out.println("To make your selection, type the corresponding number and hit Enter");
-        try {
-            String input = readInput();
-            switch(input) {
-                case "1":
-                    play();
-                    break;
-                case "2":
-                    displayRules();
-                    break;
-                case "3":
-                    System.out.println("Terminating Program... Goodbye");
-                    System.exit(0);
-                default:
-                    System.out.println("Input is invalid, try again!");
-                    mainMenu();
+        boolean selectionMade = false;
+        while (!selectionMade) {
+            System.out.println("To make your selection, type the corresponding number and hit Enter");
+            try {
+                String input = readInput();
+                switch (input) {
+                    case "1":
+                        selectionMade = true;
+                        play();
+                        break;
+                    case "2":
+                        selectionMade = true;
+                        displayRules();
+                        break;
+                    case "3":
+                        selectionMade = true;
+                        System.out.println("Terminating Program... Goodbye");
+                        System.exit(0);
+                    default:
+                        System.out.println("Input is invalid, try again!");
+                        continue;
+                }
+            } catch (IOException e) {
+                System.out.println("Input is invalid, try again!");
+                mainMenu();
             }
-        }
-        catch (IOException e) {
-            System.out.println("Input is invalid, try again!");
-            mainMenu();
         }
     }
 
@@ -51,8 +56,7 @@ public class PlayGame {
         //System.out.println(input);
         if(input == null)
         {
-            System.out.println("Input is null, try again!");
-            return readInput();
+            return "";
         }
         return input.trim();
     }
@@ -69,6 +73,21 @@ public class PlayGame {
             System.out.print("Select the cell you'd like to control:");
             try {
                 String input = readInput();
+                if (!input.matches("^[0-8]{2}$")) {
+                    if (input.equals("quit") || input.equals("exit")) {
+                        System.out.println("Are you sure you want to quit? y/n");
+                        input = readInput();
+                        if (input.equals("y")) {
+                            System.out.println("Terminating Program... Goodbye");
+                            System.exit(0);
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        System.out.println("Invalid input, try again!");
+                        continue;
+                    }
+                }
                 input =  input.substring(0,2);
                 int x = Integer.parseInt("" + input.charAt(0));
                 int y = Integer.parseInt("" + input.charAt(1));

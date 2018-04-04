@@ -80,10 +80,10 @@ public class BigBoard {
 				}
 			}
 			if(row!=8){
-				output+="--------------------------------\n";
+				output+="-----||-----||------\n";
 			}
 			if(row==2||row==5){
-				output+="--------------------------------\n";
+				output+="-----||-----||------\n";
 			}
 		}
 		output+="\n";
@@ -104,7 +104,7 @@ public class BigBoard {
 				}
 			}
 			if(row!=2){
-				output+="-----------\n";
+				output+="-----\n";
 			}
 		}
 		return output;
