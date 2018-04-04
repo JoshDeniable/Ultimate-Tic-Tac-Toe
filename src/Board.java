@@ -23,8 +23,6 @@ public class Board {
         return winner;
     }
 
-    public PLAYER getPlayer(int i, int j) { return board[i][j]; }
-
     public void checkWin() {
         PLAYER win = PLAYER.NONE;
 
@@ -78,4 +76,6 @@ public class Board {
         moveCount--;
         return this;
     }
+	
+	public PLAYER getPlayer(int i, int j) { return board[i][j]; }
 }
