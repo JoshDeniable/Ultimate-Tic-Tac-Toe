@@ -13,7 +13,7 @@ public class PlayGame {
     public static String alphaBeta(int depth, int alpha, int beta, String move, PLAYER player) {
         ArrayList<String> listOfMoves = possibleMoves();
         if (depth == 0 || listOfMoves.size() == 0) {
-            //to figure out later
+            return move + (Heuristic.ratePossition());
         }
         if (player == PLAYER.X) {
             player = PLAYER.O;
