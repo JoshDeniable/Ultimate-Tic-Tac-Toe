@@ -18,7 +18,7 @@ public class BigBoard {
 		int smallBoardCellCol = col % 3;
 		Board smallBoard = bigBoard[smallBoardRow][smallBoardCol];
 		smallBoard = smallBoard.makeMove(player, smallBoardCellRow, smallBoardCellCol);
-        if(smallBoard = null){
+        if(smallBoard == null){
 			return false; //unsuccessful
 		}
 		bigBoard[smallBoardRow][smallBoardCol] = smallBoard;
@@ -30,14 +30,14 @@ public class BigBoard {
 		int smallBoardCol = col / 3;
 		int smallBoardCellRow = row % 3;
 		int smallBoardCellCol = col % 3;
-        bigBoard[smallBoardRow][smallBoardCol].undoMove[smallBoardCellRow][smallBoardCellCol];
+        bigBoard[smallBoardRow][smallBoardCol].undoMove(smallBoardCellRow, smallBoardCellCol);
     }
 	
 	public PLAYER checkWin(){
 		//check diagonals
 		if ((bigBoard[0][0].getWinner() == bigBoard[1][1].getWinner() && bigBoard[1][1].getWinner() == bigBoard[2][2].getWinner()) 
 			|| (bigBoard[0][2].getWinner() == bigBoard[1][1].getWinner() && bigBoard[1][1].getWinner() == bigBoard[2][0].getWinner())) {
-            if (bigBoard[1][1] != PLAYER.NONE) {
+            if (bigBoard[1][1].getWinner() != PLAYER.NONE) {
                 return bigBoard[1][1].getWinner();
             }
         }

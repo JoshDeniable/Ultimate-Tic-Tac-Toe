@@ -1,19 +1,96 @@
 import java.util.*;
+import java.io.*;
 
 public class PlayGame {
     private static BigBoard gameBoard;
     private static String lastMove;
     private static final int GLOBAL_DEPTH = 6;
+    private static BufferedReader stdin = new BufferedReader (new InputStreamReader(System.in));
 
     public PlayGame() {
         gameBoard = new BigBoard();
         lastMove = "";
     }
 
-    public static String alphaBeta(int depth, int alpha, int beta, String move, PLAYER player) {
+    private static  void mainMenu() {
+        System.out.println("-----ULTIMATE TIC-TAC-TOE-----\n");
+        System.out.println("1. Start New Game");
+        System.out.println("2. Read Rules");
+        System.out.println("3. Exit Game\n");
+        System.out.println("To make your selection, type the corresponding number and hit Enter");
+        try {
+            String input = readInput();
+            switch(input) {
+                case "1":
+                    play();
+                    break;
+                case "2":
+                    displayRules();
+                    break;
+                case "3":
+                    System.out.println("Terminating Program... Goodbye");
+                    System.exit(0);
+                default:
+                    System.out.println("Input is invalid, try again!");
+                    mainMenu();
+            }
+        }
+        catch (IOException e) {
+            System.out.println("Input is invalid, try again!");
+            mainMenu();
+        }
+    }
+
+    private static void displayRules() {
+        //sout the rules for Ultimate Tic-Tac-Toe here
+    }
+
+    private static String readInput() throws IOException{
+        String input = "";
+        input = stdin.readLine().toLowerCase();
+        //System.out.println(input);
+        if(input == null)
+        {
+            System.out.println("Input is null, try again!");
+            return readInput();
+        }
+        return input.trim();
+    }
+
+    private static void play() {
+        //initialize game
+        gameBoard = new BigBoard();
+        lastMove = "";
+
+        boolean done = false;
+        while(!done) {
+            //make moves, check for winner
+            //Player chooses to be X or O? X always goes first.
+            System.out.print("Select the cell you'd like to control:");
+            try {
+                String input = readInput();
+                input =  input.substring(0,2);
+                int x = Integer.parseInt("" + input.charAt(0));
+                int y = Integer.parseInt("" + input.charAt(1));
+                gameBoard.makeMove(PLAYER.X, x, y);
+                lastMove = input;
+                String compIn = alphaBeta(GLOBAL_DEPTH, -100, 100, input, PLAYER.X);
+                int compX = Integer.parseInt(compIn.substring(0,1));
+                int compY = Integer.parseInt(compIn.substring(1,2));
+                gameBoard.makeMove(PLAYER.O, compX, compY);
+                lastMove = compIn;
+                System.out.println(gameBoard.toString());
+            }
+            catch (IOException e) {
+
+            }
+        }
+    }
+
+    public static String alphaBeta(int depth, float alpha, float beta, String move, PLAYER player) {
         ArrayList<String> listOfMoves = possibleMoves();
         if (depth == 0 || listOfMoves.size() == 0) {
-            return move + (Heuristic.ratePossition(gameBoard));
+            return move + (Heuristic.ratePosition(gameBoard));
         }
         if (player == PLAYER.X) {
             player = PLAYER.O;
@@ -22,23 +99,26 @@ public class PlayGame {
         }
         for (String newMove : listOfMoves) {
             //make the move
-            gameBoard.makeMove(player, Integer.parseInt(move.substring(0, 1)), Integer.parseInt(move.substring(1, 2)));
+            gameBoard.makeMove(player, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+            String temp = lastMove;
+            lastMove = newMove.substring(0,2);
             String returnString = alphaBeta(depth - 1, alpha, beta, newMove, player);
-            int value = Integer.valueOf(returnString.substring(2));
+            float value = Float.valueOf(returnString.substring(2));
             //undo the move
-            gameBoard.undoMove(Integer.parseInt(move.substring(0, 1)), Integer.parseInt(move.substring(1, 2)));
+            gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+            lastMove = temp;
             if (player == PLAYER.O) {
                 if (value <= beta) {
                     beta = value;
                     if (depth == GLOBAL_DEPTH) {
-                        move = returnString.substring(0, 3);
+                        move = returnString.substring(0, 2);
                     }
                 }
             } else {
                 if (value > alpha) {
                     alpha = value;
                     if (depth == GLOBAL_DEPTH) {
-                        move = returnString.substring(0, 3);
+                        move = returnString.substring(0, 2);
                     }
                 }
             }
@@ -67,9 +147,9 @@ public class PlayGame {
             }
             return listOfMoves;
         }
-        Board smallBoard = gameBoard.getBoard(Integer.parseInt(lastMove.substring(0, 1)) / 3, Integer.parseInt(lastMove.substring(1, 2)) / 3);
+        Board smallBoard = gameBoard.getBoard(Integer.parseInt(lastMove.substring(0, 1)) % 3, Integer.parseInt(lastMove.substring(1, 2)) % 3);
         if (smallBoard.getWinner() == PLAYER.NONE) { // that board has not been won yet, have to play there
-            listOfMoves = possibleMovesWithinABoard(Integer.parseInt(lastMove.substring(0, 1)) / 3, Integer.parseInt(lastMove.substring(1, 2)) / 3);
+            listOfMoves = possibleMovesWithinABoard(Integer.parseInt(lastMove.substring(0, 1)) % 3, Integer.parseInt(lastMove.substring(1, 2)) % 3);
             return listOfMoves;
         } else { //that board has been won, can play in any board where winner is PLAYER.NONE
             for (int i = 0; i < 3; i++) {
@@ -96,6 +176,6 @@ public class PlayGame {
     }
 
     public static void main(String[] args) {
-        PlayGame newGame = new PlayGame();
+        mainMenu();
     }
 }
