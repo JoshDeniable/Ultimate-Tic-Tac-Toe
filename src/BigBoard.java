@@ -1,6 +1,6 @@
 public class BigBoard {
 
-    public Board[][] bigBoard;
+    private Board[][] bigBoard;
 
     public BigBoard() {
         bigBoard = new Board[3][3];
@@ -11,25 +11,29 @@ public class BigBoard {
         }
     }
 
-    public boolean makeMove(PLAYER player, int row, int col){
+    public boolean makeMove(PLAYER player, int row, int col) {
         int smallBoardRow = row / 3;
-	int smallBoardCol = col / 3;
-	int smallBoardCellRow = row % 3;
-	int smallBoardCellCol = col % 3;
-	Board smallBoard = bigBoard[smallBoardRow][smallBoardCol];
-	smallBoard = smallBoard.makeMove(player, smallBoardCellRow, smallBoardCellCol);
-        if(smallBoard = null){
-	    return false; //unsuccessful
-	}
-	bigBoard[smallBoardRow][smallBoardCol] = smallBoard;
-	return true; //successful
+        int smallBoardCol = col / 3;
+        int smallBoardCellRow = row % 3;
+        int smallBoardCellCol = col % 3;
+        Board smallBoard = bigBoard[smallBoardRow][smallBoardCol];
+        smallBoard = smallBoard.makeMove(player, smallBoardCellRow, smallBoardCellCol);
+        if (smallBoard == null) {
+            return false; //unsuccessful
+        }
+        bigBoard[smallBoardRow][smallBoardCol] = smallBoard;
+        return true; //successful
     }
 
-    public void undoMove(int row, int col){
+    public void undoMove(int row, int col) {
         int smallBoardRow = row / 3;
-	int smallBoardCol = col / 3;
-	int smallBoardCellRow = row % 3;
-	int smallBoardCellCol = col % 3;
-        bigBoard[smallBoardRow][smallBoardCol].undoMove[smallBoardCellRow][smallBoardCellCol];
+        int smallBoardCol = col / 3;
+        int smallBoardCellRow = row % 3;
+        int smallBoardCellCol = col % 3;
+        bigBoard[smallBoardRow][smallBoardCol].undoMove(smallBoardCellRow, smallBoardCellCol);
+    }
+
+    public Board getBoard(int i, int j) {
+        return bigBoard[i][j];
     }
 }
