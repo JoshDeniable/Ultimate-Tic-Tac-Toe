@@ -1,3 +1,11 @@
+/*
+Stanimir Genov & Joshua DeNoble
+April 18
+Concepts of Artificial Intelligence(graduate) Spring 2018
+
+This program has been written to play the game of Ultimate Tic-Tac-Toe with the ability to be able to beat any human
+*/
+
 import java.util.*;
 import java.io.*;
 
@@ -109,7 +117,7 @@ public class PlayGame {
     public static String alphaBeta(int depth, float alpha, float beta, String move, PLAYER player) {
         ArrayList<String> listOfMoves = possibleMoves();
         if (depth == 0 || listOfMoves.size() == 0) {
-            return move + (Heuristic.ratePosition(gameBoard));
+            return move + (Heuristic.ratePosition(gameBoard,move,player));
         }
         if (player == PLAYER.X) {
             player = PLAYER.O;
