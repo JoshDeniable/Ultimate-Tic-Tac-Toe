@@ -1,6 +1,6 @@
-1. m̶a̶i̶n̶ ̶o̶f̶ ̶P̶l̶a̶y̶G̶a̶m̶e̶ ̶-̶-̶ ̶C̶r̶e̶a̶t̶e̶ ̶U̶I̶
-2. Restrict player cell selection to specified ninth
-3. [Probably something important]
-4. Test with deeper searching AI (Increase Depth)
-5. Implement functional Heuristics
+1. ..main of PlayGame -- Create UI (done)
+2. ..Restrict player cell selection to specified ninth (done)
+3. ..Don't let player select a cell that's already occupied (done)
+4. Test with deeper searching AI (Increase Depth, 20-30)
+5. ..Implement functional Heuristics (Done)
 6. Maybe add numbers to the toString so it's easy to tell where the cells are?
