@@ -4,7 +4,7 @@ public class Heuristic{
 	//which will calculate an individual rating for the position and those 3 heuristcs will be added up to come up with the final evaluation of the position
 	//in the case that there is a winner, instead of calculating individual heuristcs, a big number will be returned
 	//(based on who the winner is either positive or negative)
-	public static float ratePosition(BigBoard gameBoard,String lastMove,Player player){
+	public static float ratePosition(BigBoard gameBoard,String lastMove,PLAYER player){
 		float result = 0;
 		PLAYER winner = gameBoard.checkWin();
 		if(winner==PLAYER.NONE){
@@ -64,17 +64,18 @@ public class Heuristic{
 		Board individualBoard = gameBoard.getBoard(individualBoardRow,individualBoardCol);
 		for(int boardRow=0;boardRow<3;boardRow++){
 			for(int boardCol=0;boardCol<3;boardCol++){
-				if(individualBoard.getPlayer()==PLAYER.NONE){
+				if(individualBoard.getPlayer(boardRow,boardCol)==PLAYER.NONE){
 					result-=1;
 				}
 			}
 		}
 		if(result==0){
-			result == 10;
+			result = 10;
 		}
 		if(player == PLAYER.O){
 			result *= -1;
 		}
+		return result;
 	}
 	
 	//give extra priority to having control over the middle board
@@ -89,9 +90,9 @@ public class Heuristic{
 		}
 		for(int innerRow=0;innerRow<3;innerRow++){
 			for(int innerCol=0;innerCol<3;innerCol++){
-				if(midBoard.getPlayer()==PLAYER.X){
+				if(midBoard.getPlayer(innerRow, innerCol)==PLAYER.X){
 					result-=1;
-				} else if(midBoard.getPlayer()==PLAYER.O){
+				} else if(midBoard.getPlayer(innerRow, innerCol)==PLAYER.O){
 					result+=1;
 				}
 			}

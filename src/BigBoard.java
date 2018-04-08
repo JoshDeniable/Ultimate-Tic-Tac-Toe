@@ -113,4 +113,7 @@ public class BigBoard {
     public Board getBoard(int i, int j) {
         return bigBoard[i][j];
     }
+    public PLAYER getPlayer (int i, int j) {
+    	return getBoard(i/3, j/3).getPlayer(i%3, j%3);
+	}
 }

@@ -78,6 +78,24 @@ public class PlayGame {
         while(!done) {
             //make moves, check for winner
             //Player chooses to be X or O? X always goes first.
+			String cellRow = "[0-8]";
+			String cellCol = "[0-8]";
+			int playerRowMin = 0; int playerColMin = 0;
+			int playerRowMax = 8; int playerColMax = 8;
+			if (!lastMove.equals("")) {
+				int bigRow = Integer.parseInt(lastMove.substring(0, 1)) % 3;
+				int bigCol = Integer.parseInt(lastMove.substring(1, 2)) % 3;
+				Board smallBoard = gameBoard.getBoard(bigRow, bigCol);
+				if (smallBoard.getWinner() == PLAYER.NONE) { // that board has not been won yet, have to play there
+					playerRowMin = bigRow*3;
+					playerRowMax = playerRowMin + 2;
+					playerColMin = bigCol*3;
+					playerColMax = playerColMin + 2;
+					cellRow = "[" + playerRowMin + "-" + playerRowMax + "]";
+					cellCol = "[" + playerColMin + "-" + playerColMax + "]";
+				}
+			}
+			System.out.println("For this turn, you must choose a cell between rows " + cellRow + " and columns " + cellCol);
             System.out.print("Select the cell you'd like to control:");
             try {
                 String input = readInput();
@@ -99,7 +117,16 @@ public class PlayGame {
                 input =  input.substring(0,2);
                 int x = Integer.parseInt("" + input.charAt(0));
                 int y = Integer.parseInt("" + input.charAt(1));
-                gameBoard.makeMove(PLAYER.X, x, y);
+                if (x >= playerRowMin && x <= playerRowMax && y >= playerColMin && y <= playerColMax) {
+					if (gameBoard.getPlayer(x, y) == PLAYER.NONE) {
+						gameBoard.makeMove(PLAYER.X, x, y);
+					} else {
+						System.out.println("\nThat cell is already occupied! Try again!");
+						continue;
+					}
+				} else {
+                	continue;
+				}
                 lastMove = input;
                 String compIn = alphaBeta(GLOBAL_DEPTH, -100, 100, input, PLAYER.X);
                 int compX = Integer.parseInt(compIn.substring(0,1));
@@ -109,7 +136,7 @@ public class PlayGame {
                 System.out.println(gameBoard.toString());
             }
             catch (IOException e) {
-
+                //Do nothing, probably
             }
         }
     }
