@@ -12,7 +12,7 @@ import java.io.*;
 public class PlayGame {
     private static BigBoard gameBoard;
     private static String lastMove;
-    private static final int GLOBAL_DEPTH = 6; // Test depths on both PC and Laptop (try to get to 20ish)
+    private static final int GLOBAL_DEPTH = 9; // Odd depths are better for better AI
     private static BufferedReader stdin = new BufferedReader (new InputStreamReader(System.in));
 
     public PlayGame() {
@@ -73,6 +73,7 @@ public class PlayGame {
         //initialize game
         gameBoard = new BigBoard();
         lastMove = "";
+        String winString = "";
 
         boolean done = false;
         while(!done) {
@@ -109,6 +110,15 @@ public class PlayGame {
                         } else {
                             continue;
                         }
+                    } else if (input.equals("restart")) {
+                        System.out.println("Are you sure you want to restart? y/n");
+                        input = readInput();
+                        if (input.equals("y")) {
+                            System.out.println("\n\n\n\n\n\n\n\n\n\n");
+                            play();
+                            done = true;
+                            continue;
+                        }
                     } else {
                         System.out.println("Invalid input, try again!");
                         continue;
@@ -120,6 +130,10 @@ public class PlayGame {
                 if (x >= playerRowMin && x <= playerRowMax && y >= playerColMin && y <= playerColMax) {
 					if (gameBoard.getPlayer(x, y) == PLAYER.NONE) {
 						gameBoard.makeMove(PLAYER.X, x, y);
+                        if (gameBoard.checkWin() == PLAYER.X) {
+                            winString = ("\nCongratulations, you've won!");
+                            done = true;
+                        }
 					} else {
 						System.out.println("\nThat cell is already occupied! Try again!");
 						continue;
@@ -133,6 +147,10 @@ public class PlayGame {
 				int compX = Integer.parseInt(compIn.substring(0,1));
                 int compY = Integer.parseInt(compIn.substring(1,2));
                 gameBoard.makeMove(PLAYER.O, compX, compY);
+                if (gameBoard.checkWin() == PLAYER.O) {
+                    winString = ("\nYou have been defeated...");
+                    done = true;
+                }
                 lastMove = compIn;
                 System.out.println(gameBoard.toString());
             }
@@ -140,6 +158,7 @@ public class PlayGame {
                 //Do nothing, probably
             }
         }
+        System.out.println(winString);
     }
 
 	//public static String alphaBeta(int depth, float alpha, float beta, String move, PLAYER player) {
@@ -155,37 +174,47 @@ public class PlayGame {
         }
 		float tempValue;
         if (maximizingPlayer) {
-			value = -999999999;
+			float value = -99999999;
+			String bestMove = listOfMoves.get(0);
 			for(String newMove : listOfMoves){
 				gameBoard.makeMove(PLAYER.O, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
 				String temp = lastMove;
 				lastMove = newMove.substring(0,2);
 				String returnString = alphaBeta(depth - 1, alpha, beta, newMove, false);
-				float tempValue = Float.valueOf(returnString.substring(2));
+				tempValue = Float.valueOf(returnString.substring(2));
 				gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+				lastMove = temp;
 				value = Math.max(value, tempValue);
 				alpha = Math.max(alpha, value);
+				if (value > tempValue) {
+				    bestMove = newMove.substring(0, 2);
+                }
 				if(beta <= alpha){
 					break; //beta cut-off
 				}
 			}
-			return move+value;
+			return bestMove + value;
         } else {
-            value = 999999999;
+            float value = 99999999;
+            String bestMove = listOfMoves.get(0);
 			for(String newMove : listOfMoves){
 				gameBoard.makeMove(PLAYER.X, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
 				String temp = lastMove;
 				lastMove = newMove.substring(0,2);
 				String returnString = alphaBeta(depth - 1, alpha, beta, newMove, true);
-				float tempValue = Float.valueOf(returnString.substring(2));
+				tempValue = Float.valueOf(returnString.substring(2));
 				gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+				lastMove = temp;
 				value = Math.min(value,tempValue);
 				beta = Math.min(beta,value);
+				if (value < tempValue) {
+				    bestMove = newMove.substring(0,2);
+                }
 				if(beta <= alpha){
 					break;
 				}
 			}
-			return move + value;
+			return bestMove + value;
         }
 	}
 		/*

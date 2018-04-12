@@ -8,9 +8,9 @@ public class Heuristic{
 		float result = 0;
 		PLAYER winner = gameBoard.checkWin();
 		if(winner==PLAYER.NONE){
-			result += heuristic1(gameBoard);
+			result += heuristic1(gameBoard)*3;
 			result += heuristic2(gameBoard,lastMove,player);
-			result += heuristic3(gameBoard);
+			result += heuristic3(gameBoard)*2;
 			return result;
 		} else {
 			if(winner == PLAYER.X){
