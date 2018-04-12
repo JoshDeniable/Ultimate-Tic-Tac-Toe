@@ -72,7 +72,7 @@ public class Heuristic{
 		if(result==0){
 			result = 10;
 		}
-		if(player == PLAYER.O){
+		if(player == PLAYER.X){
 			result *= -1;
 		}
 		return result;

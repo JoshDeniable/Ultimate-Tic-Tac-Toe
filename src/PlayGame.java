@@ -128,8 +128,9 @@ public class PlayGame {
                 	continue;
 				}
                 lastMove = input;
-                String compIn = alphaBeta(GLOBAL_DEPTH, -100, 100, input, PLAYER.X);
-                int compX = Integer.parseInt(compIn.substring(0,1));
+                //String compIn = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, input, PLAYER.O);
+                String compIn = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, input, true);
+				int compX = Integer.parseInt(compIn.substring(0,1));
                 int compY = Integer.parseInt(compIn.substring(1,2));
                 gameBoard.makeMove(PLAYER.O, compX, compY);
                 lastMove = compIn;
@@ -141,16 +142,58 @@ public class PlayGame {
         }
     }
 
-    public static String alphaBeta(int depth, float alpha, float beta, String move, PLAYER player) {
+	//public static String alphaBeta(int depth, float alpha, float beta, String move, PLAYER player) {
+    public static String alphaBeta(int depth, float alpha, float beta, String move, boolean maximizingPlayer) {
         ArrayList<String> listOfMoves = possibleMoves();
         if (depth == 0 || listOfMoves.size() == 0) {
-            return move + (Heuristic.ratePosition(gameBoard,move,player));
+			//return move + (Heuristic.ratePosition(gameBoard,move,player));
+			if(maximizingPlayer){
+				return move + (Heuristic.ratePosition(gameBoard,move,PLAYER.O));
+			} else {
+				return move + (Heuristic.ratePosition(gameBoard,move,PLAYER.X));
+			}
         }
-        if (player == PLAYER.X) {
-            player = PLAYER.O;
-        } else if (player == PLAYER.O) {
-            player = PLAYER.X;
+		float tempValue;
+        if (maximizingPlayer) {
+			value = -999999999;
+			for(String newMove : listOfMoves){
+				gameBoard.makeMove(PLAYER.O, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+				String temp = lastMove;
+				lastMove = newMove.substring(0,2);
+				String returnString = alphaBeta(depth - 1, alpha, beta, newMove, false);
+				float tempValue = Float.valueOf(returnString.substring(2));
+				gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+				value = Math.max(value, tempValue);
+				alpha = Math.max(alpha, value);
+				if(beta <= alpha){
+					break; //beta cut-off
+				}
+			}
+			return move+value;
+        } else {
+            value = 999999999;
+			for(String newMove : listOfMoves){
+				gameBoard.makeMove(PLAYER.X, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+				String temp = lastMove;
+				lastMove = newMove.substring(0,2);
+				String returnString = alphaBeta(depth - 1, alpha, beta, newMove, true);
+				float tempValue = Float.valueOf(returnString.substring(2));
+				gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
+				value = Math.min(value,tempValue);
+				beta = Math.min(beta,value);
+				if(beta <= alpha){
+					break;
+				}
+			}
+			return move + value;
         }
+	}
+		/*
+		if(player == PLAYER.O){
+			player = PLAYER.X;
+		} else {
+			player = PLAYER.O;
+		}
         for (String newMove : listOfMoves) {
             //make the move
             gameBoard.makeMove(player, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
@@ -184,12 +227,7 @@ public class PlayGame {
                 }
             }
         }
-        if (player == PLAYER.O) {
-            return move + beta;
-        } else {
-            return move + alpha;
-        }
-    }
+    } */
 
     private static ArrayList<String> possibleMoves() {
         ArrayList<String> listOfMoves = new ArrayList<>();
