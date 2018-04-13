@@ -12,7 +12,7 @@ import java.io.*;
 public class PlayGame {
     private static BigBoard gameBoard;
     private static String lastMove;
-    private static final int GLOBAL_DEPTH = 9; // Odd depths are better for better AI
+    private static final int GLOBAL_DEPTH = 9; // Odd depths are better for good AI
     private static BufferedReader stdin = new BufferedReader (new InputStreamReader(System.in));
 
     public PlayGame() {
@@ -44,8 +44,7 @@ public class PlayGame {
                         System.out.println("Terminating Program... Goodbye");
                         System.exit(0);
                     default:
-                        System.out.println("Input is invalid, try again!");
-                        continue;
+                        System.out.println("Input is invalid, try again!\n");
                 }
             } catch (IOException e) {
                 System.out.println("Input is invalid, try again!");
@@ -59,13 +58,8 @@ public class PlayGame {
     }
 
     private static String readInput() throws IOException{
-        String input = "";
+        String input;
         input = stdin.readLine().toLowerCase();
-        //System.out.println(input);
-        if(input == null)
-        {
-            return "";
-        }
         return input.trim();
     }
 
@@ -73,10 +67,9 @@ public class PlayGame {
         //initialize game
         gameBoard = new BigBoard();
         lastMove = "";
-        String winString = "";
+        String winString;
 
-        boolean done = false;
-        while(!done) {
+        while(true) {
             //make moves, check for winner
             //Player chooses to be X or O? X always goes first.
 			String cellRow = "[0-8]";
@@ -97,32 +90,60 @@ public class PlayGame {
 				}
 			}
 			System.out.println("For this turn, you must choose a cell between rows " + cellRow + " and columns " + cellCol);
-            System.out.print("Select the cell you'd like to control:");
+            System.out.print("Select the cell you'd like to control: ");
             try {
                 String input = readInput();
                 if (!input.matches("^[0-8]{2}$")) {
-                    if (input.equals("quit") || input.equals("exit")) {
-                        System.out.println("Are you sure you want to quit? y/n");
-                        input = readInput();
-                        if (input.equals("y")) {
-                            System.out.println("Terminating Program... Goodbye");
-                            System.exit(0);
-                        } else {
-                            continue;
-                        }
-                    } else if (input.equals("restart")) {
-                        System.out.println("Are you sure you want to restart? y/n");
-                        input = readInput();
-                        if (input.equals("y")) {
-                            System.out.println("\n\n\n\n\n\n\n\n\n\n");
-                            play();
-                            done = true;
-                            continue;
-                        }
-                    } else {
-                        System.out.println("Invalid input, try again!");
-                        continue;
-                    }
+                	switch (input) {
+						case "quit":
+							System.out.println("Are you sure you want to quit to the Main Menu? y/n");
+							input = readInput();
+							if (input.equals("y")) {
+								mainMenu();
+							} else {
+								continue;
+							}
+						case "exit":
+							System.out.println("Are you sure you want to quit to the Main Menu? y/n");
+							input = readInput();
+							if (input.equals("y")) {
+								mainMenu();
+							} else {
+								continue;
+							}
+						case "restart":
+							System.out.println("Are you sure you want to restart this game? y/n");
+							input = readInput();
+							if (input.equals("y")) {
+								System.out.println("\n\n\n\n\n\n\n\n\n\n");
+								play();
+								break;
+							}
+						default :
+							System.out.println("Invalid input, try again!\n");
+							continue;
+					}
+//                    if (input.equals("quit") || input.equals("exit")) {
+//                        System.out.println("Are you sure you want to quit? y/n");
+//                        input = readInput();
+//                        if (input.equals("y")) {
+//                            System.out.println("Terminating Program... Goodbye");
+//                            System.exit(0);
+//                        } else {
+//                            continue;
+//                        }
+//                    } else if (input.equals("restart")) {
+//                        System.out.println("Are you sure you want to restart? y/n");
+//                        input = readInput();
+//                        if (input.equals("y")) {
+//                            System.out.println("\n\n\n\n\n\n\n\n\n\n");
+//                            play();
+//                            break;
+//                        }
+//                    } else {
+//                        System.out.println("Invalid input, try again!");
+//                        continue;
+//                    }
                 }
                 input =  input.substring(0,2);
                 int x = Integer.parseInt("" + input.charAt(0));
@@ -132,7 +153,7 @@ public class PlayGame {
 						gameBoard.makeMove(PLAYER.X, x, y);
                         if (gameBoard.checkWin() == PLAYER.X) {
                             winString = ("\nCongratulations, you've won!");
-                            done = true;
+                            break;
                         }
 					} else {
 						System.out.println("\nThat cell is already occupied! Try again!");
@@ -149,10 +170,11 @@ public class PlayGame {
                 gameBoard.makeMove(PLAYER.O, compX, compY);
                 if (gameBoard.checkWin() == PLAYER.O) {
                     winString = ("\nYou have been defeated...");
-                    done = true;
+                    break;
                 }
                 lastMove = compIn;
-                System.out.println(gameBoard.toString());
+                System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + lastMove.substring(0,2));
+				System.out.println("It is now Player X's turn\n");
             }
             catch (IOException e) {
                 //Do nothing, probably
@@ -162,7 +184,7 @@ public class PlayGame {
     }
 
 	//public static String alphaBeta(int depth, float alpha, float beta, String move, PLAYER player) {
-    public static String alphaBeta(int depth, float alpha, float beta, String move, boolean maximizingPlayer) {
+    private static String alphaBeta(int depth, float alpha, float beta, String move, boolean maximizingPlayer) {
         ArrayList<String> listOfMoves = possibleMoves();
         if (depth == 0 || listOfMoves.size() == 0) {
 			//return move + (Heuristic.ratePosition(gameBoard,move,player));
