@@ -1,7 +1,8 @@
 public class BigBoard {
 
     private Board[][] bigBoard;
-	
+
+    //initialize the big board with small boards
     public BigBoard() {
         bigBoard = new Board[3][3];
         for (int i = 0; i < 3; i++) {
@@ -11,6 +12,7 @@ public class BigBoard {
         }
     }
 
+    //make a move on the big board by calling make move on the relative small board, return whether the move has been made successfully
     public boolean makeMove(PLAYER player, int row, int col){
         int smallBoardRow = row / 3;
 		int smallBoardCol = col / 3;
@@ -25,6 +27,7 @@ public class BigBoard {
 		return true; //successful
     }
 
+    //undo move made on the corresponding small board, used by minimax algorithm, not human player
     public void undoMove(int row, int col){
         int smallBoardRow = row / 3;
 		int smallBoardCol = col / 3;
@@ -32,7 +35,8 @@ public class BigBoard {
 		int smallBoardCellCol = col % 3;
         bigBoard[smallBoardRow][smallBoardCol].undoMove(smallBoardCellRow, smallBoardCellCol);
     }
-	
+
+    //check if either player has won by looking at the diagonals, rows, and columns
 	public PLAYER checkWin(){
 		//check diagonals
 		if ((bigBoard[0][0].getWinner() == bigBoard[1][1].getWinner() && bigBoard[1][1].getWinner() == bigBoard[2][2].getWinner()) 
@@ -59,7 +63,8 @@ public class BigBoard {
         }
 		return PLAYER.NONE;
 	}
-	
+
+	//produces an output so that the player can see the current state of the board, as well as a small board which shows which of the small boards has been won so far
 	public String toString(){
 		String output = "";
 		for(int row=0; row<9; row++){
@@ -109,11 +114,9 @@ public class BigBoard {
 		}
 		return output;
 	}
-	
+
+	//returns the corresponding small board
     public Board getBoard(int i, int j) {
         return bigBoard[i][j];
     }
-    public PLAYER getPlayer (int i, int j) {
-    	return getBoard(i/3, j/3).getPlayer(i%3, j%3);
-	}
 }

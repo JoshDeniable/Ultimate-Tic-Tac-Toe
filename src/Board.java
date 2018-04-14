@@ -4,6 +4,7 @@ public class Board {
     private int moveCount;
     private PLAYER winner;
 
+    //creates a small board and initializes each space as PLAYER.NONE
     public Board() {
         moveCount = 0;
         board = new PLAYER[3][3];
@@ -15,17 +16,13 @@ public class Board {
         winner = PLAYER.NONE;
     }
 
+    //set the winner
     private void setWinner(PLAYER winner) {
         this.winner = winner;
     }
 
+    //checks if someone has won this board, if it has been tied, or if still no winner
     public PLAYER getWinner() {
-        return winner;
-    }
-
-    public void checkWin() {
-        PLAYER win = PLAYER.NONE;
-
         //check diagonals
         if ((board[0][0] == board[1][1] && board[1][1] == board[2][2]) || (board[0][2] == board[1][1] && board[1][1] == board[2][0])) {
             if (board[1][1] != PLAYER.NONE) {
@@ -53,14 +50,16 @@ public class Board {
         if (winner == PLAYER.NONE && moveCount == 9) {
             setWinner(PLAYER.TIE);
         }
+        return winner;
     }
 
+    //make a move on the board, increment the number of moves made, and return the updated board
     public Board makeMove(PLAYER move, int row, int col) {
         if (winner == PLAYER.NONE) {
             if (board[row][col] == PLAYER.NONE) {
                 board[row][col] = move;
-                checkWin();
                 moveCount++;
+                getWinner();
             } else {
                 return null; //couldn't make the move as someone had already played there
             }
@@ -70,12 +69,14 @@ public class Board {
         return this;
     }
 
+    //undo a move and decrement moveCount, used by minimax, not human player
     public Board undoMove(int row, int col) {
         winner = PLAYER.NONE;
         board[row][col] = PLAYER.NONE;
         moveCount--;
         return this;
     }
-	
+
+    //see who occupies an individual square on the board
 	public PLAYER getPlayer(int i, int j) { return board[i][j]; }
 }

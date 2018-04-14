@@ -1,15 +1,14 @@
 public class Heuristic{
 	
-	//when the minimax algorithm goes to evaluate a leaf node, it will call this method which will call 3 other methods internal to this class
-	//which will calculate an individual rating for the position and those 3 heuristcs will be added up to come up with the final evaluation of the position
-	//in the case that there is a winner, instead of calculating individual heuristcs, a big number will be returned
+	//when the minimax algorithm goes to evaluate a leaf node, it will call this method which will call 2 other methods internal(one of which will call the other heuristic) to this class
+	//which will calculate an individual rating for the position and that heuristic will be added up to come up with the final evaluation of the position
+	//in the case that there is a winner, instead of calculating individual heuristics, a big number will be returned
 	//(based on who the winner is either positive or negative)
 	public static float ratePosition(BigBoard gameBoard){
 		float result = 0;
 		PLAYER winner = gameBoard.checkWin();
 		if(winner==PLAYER.NONE){
-			result += heuristic1(gameBoard)*3;
-			result += heuristic2(gameBoard)*2;
+			result += heuristic1(gameBoard);
 			return result;
 		} else {
 			if(winner == PLAYER.X){
@@ -22,15 +21,8 @@ public class Heuristic{
 		}
 	}
 
-	//Look for 2 in the same row/column/diagonal, as long as the third in that row/column/diagonal has not been won yet
-	private static float heuristic1(BigBoard gameBoard){
-		float result=0;
-
-		return result;
-	}
-
     //	give priority for winning center, and corner boards, if a board is not won, run another heuristic on it
-     private static float heuristic2(BigBoard gameBoard){
+     private static float heuristic1(BigBoard gameBoard){
 		float result = 0;
 		for(int i = 0; i<3; i++){
 		    for(int j = 0;j<3; j++){
