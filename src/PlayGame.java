@@ -54,7 +54,11 @@ public class PlayGame {
     }
 
     private static void displayRules() {
-        //sout the rules for Ultimate Tic-Tac-Toe here
+        System.out.println("In order to win, you have to win the big board in the same way you would with a regular Tic-Tac-Toe game,");
+        System.out.println("by controlling 3 of the small boards in a row. When you play in a certain square within a small board, ");
+        System.out.println("your opponent has to play in the corresponding small board. For example, if you play in the top right of ");
+        System.out.println("a board, your opponent will have to play in the top right board. If that board has already been won or is");
+        System.out.println("is completely filled but no one has won it, your opponent can play in any board that has not been won.");
     }
 
     private static String readInput() throws IOException{
@@ -123,27 +127,6 @@ public class PlayGame {
 							System.out.println("Invalid input, try again!\n");
 							continue;
 					}
-//                    if (input.equals("quit") || input.equals("exit")) {
-//                        System.out.println("Are you sure you want to quit? y/n");
-//                        input = readInput();
-//                        if (input.equals("y")) {
-//                            System.out.println("Terminating Program... Goodbye");
-//                            System.exit(0);
-//                        } else {
-//                            continue;
-//                        }
-//                    } else if (input.equals("restart")) {
-//                        System.out.println("Are you sure you want to restart? y/n");
-//                        input = readInput();
-//                        if (input.equals("y")) {
-//                            System.out.println("\n\n\n\n\n\n\n\n\n\n");
-//                            play();
-//                            break;
-//                        }
-//                    } else {
-//                        System.out.println("Invalid input, try again!");
-//                        continue;
-//                    }
                 }
                 input =  input.substring(0,2);
                 int x = Integer.parseInt("" + input.charAt(0));
@@ -163,7 +146,6 @@ public class PlayGame {
                 	continue;
 				}
                 lastMove = input;
-                //String compIn = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, input, PLAYER.O);
                 String compIn = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, input, true);
 				int compX = Integer.parseInt(compIn.substring(0,1));
                 int compY = Integer.parseInt(compIn.substring(1,2));
@@ -187,17 +169,12 @@ public class PlayGame {
     private static String alphaBeta(int depth, float alpha, float beta, String move, boolean maximizingPlayer) {
         ArrayList<String> listOfMoves = possibleMoves();
         if (depth == 0 || listOfMoves.size() == 0) {
-			//return move + (Heuristic.ratePosition(gameBoard,move,player));
-			if(maximizingPlayer){
-				return move + (Heuristic.ratePosition(gameBoard,move,PLAYER.O));
-			} else {
-				return move + (Heuristic.ratePosition(gameBoard,move,PLAYER.X));
-			}
+            return move + (Heuristic.ratePosition(gameBoard));
         }
 		float tempValue;
+        String bestMove = listOfMoves.get(0);
         if (maximizingPlayer) {
-			float value = -99999999;
-			String bestMove = listOfMoves.get(0);
+			float value = (float) Integer.MIN_VALUE;
 			for(String newMove : listOfMoves){
 				gameBoard.makeMove(PLAYER.O, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
 				String temp = lastMove;
@@ -206,10 +183,12 @@ public class PlayGame {
 				tempValue = Float.valueOf(returnString.substring(2));
 				gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
 				lastMove = temp;
-				value = Math.max(value, tempValue);
-				alpha = Math.max(alpha, value);
-				if (value > tempValue) {
-				    bestMove = newMove.substring(0, 2);
+				if(value!=tempValue) {
+                    value = Math.max(value, tempValue);
+                    alpha = Math.max(alpha, value);
+                    if (value == tempValue) {
+                        bestMove = newMove.substring(0, 2);
+                    }
                 }
 				if(beta <= alpha){
 					break; //beta cut-off
@@ -217,8 +196,7 @@ public class PlayGame {
 			}
 			return bestMove + value;
         } else {
-            float value = 99999999;
-            String bestMove = listOfMoves.get(0);
+            float value = (float) Integer.MAX_VALUE;
 			for(String newMove : listOfMoves){
 				gameBoard.makeMove(PLAYER.X, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
 				String temp = lastMove;
@@ -227,61 +205,26 @@ public class PlayGame {
 				tempValue = Float.valueOf(returnString.substring(2));
 				gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
 				lastMove = temp;
-				value = Math.min(value,tempValue);
-				beta = Math.min(beta,value);
-				if (value < tempValue) {
-				    bestMove = newMove.substring(0,2);
+				if(value!=tempValue) {
+                    value = Math.min(value, tempValue);
+                    beta = Math.min(beta, value);
+                    if (value == tempValue) {
+                        bestMove = newMove.substring(0, 2);
+                    }
                 }
 				if(beta <= alpha){
-					break;
+					break; //alpha cut-off
 				}
 			}
 			return bestMove + value;
         }
 	}
-		/*
-		if(player == PLAYER.O){
-			player = PLAYER.X;
-		} else {
-			player = PLAYER.O;
-		}
-        for (String newMove : listOfMoves) {
-            //make the move
-            gameBoard.makeMove(player, Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
-            String temp = lastMove;
-            lastMove = newMove.substring(0,2);
-            String returnString = alphaBeta(depth - 1, alpha, beta, newMove, player);
-            float value = Float.valueOf(returnString.substring(2));
-            //undo the move
-            gameBoard.undoMove(Integer.parseInt(newMove.substring(0, 1)), Integer.parseInt(newMove.substring(1, 2)));
-            lastMove = temp;
-            if (player == PLAYER.O) {
-                if (value <= beta) {
-                    beta = value;
-                    if (depth == GLOBAL_DEPTH) {
-                        move = returnString.substring(0, 2);
-                    }
-                }
-            } else {
-                if (value > alpha) {
-                    alpha = value;
-                    if (depth == GLOBAL_DEPTH) {
-                        move = returnString.substring(0, 2);
-                    }
-                }
-            }
-            if (alpha >= beta) {
-                if (player == PLAYER.O) {
-                    return move + beta;
-                } else {
-                    return move + alpha;
-                }
-            }
-        }
-    } */
 
     private static ArrayList<String> possibleMoves() {
         ArrayList<String> listOfMoves = new ArrayList<>();
+        if(gameBoard.checkWin()!=PLAYER.NONE){
+            return listOfMoves;
+        }
         if (lastMove.equals("")) { // first move, can play anywhere
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
