@@ -44,7 +44,7 @@ public class Heuristic{
                         result += 10;
                     }
                 } else {
-                    result += heuristic3(currentBoard);
+                    result += heuristic2(currentBoard);
                 }
 
             }
@@ -53,7 +53,7 @@ public class Heuristic{
 	}
 
 	//return the difference of X's and O's within a given board. Give extra priority to the center
-    private static float heuristic3(Board currentBoard){
+    private static float heuristic2(Board currentBoard){
         float result=0;
 	    for(int innerRow=0;innerRow<3;innerRow++){
             for(int innerCol=0;innerCol<3;innerCol++){
