@@ -180,6 +180,7 @@ public class PlayGame {
             }
         }
         System.out.println(winString);
+        System.out.println(gameBoard.toString());
     }
 
     //method for checking if there are any boards that have not been won/tied, if so, the current board is still playable
