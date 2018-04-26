@@ -26,7 +26,8 @@ public class PlayGame {
         System.out.println("-----ULTIMATE TIC-TAC-TOE-----\n");
         System.out.println("1. Start New Game");
         System.out.println("2. Read Rules");
-        System.out.println("3. Exit Game\n");
+        System.out.println("3. Exit Game");
+        System.out.println("4. AI vs AI -=BETA=-\n");
         boolean selectionMade = false;
         while (!selectionMade) {
             System.out.println("To make your selection, type the corresponding number and hit Enter");
@@ -46,6 +47,10 @@ public class PlayGame {
                         selectionMade = true;
                         System.out.println("Terminating Program... Goodbye");
                         System.exit(0);
+                    case "4":
+                        selectionMade = true;
+                        playAI();
+                        break;
                     default:
                         System.out.println("Input is invalid, try again!\n");
                 }
@@ -163,6 +168,7 @@ public class PlayGame {
 				int compX = Integer.parseInt(compIn.substring(0,1));
                 int compY = Integer.parseInt(compIn.substring(1,2));
                 gameBoard.makeMove(PLAYER.O, compX, compY);
+                System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + compIn.substring(0,2));
                 if (gameBoard.checkWin() == PLAYER.O) {
                     winString = ("\nYou have been defeated...");
                     break;
@@ -172,15 +178,48 @@ public class PlayGame {
                 }
                 //inform the player where the computer played
                 lastMove = compIn;
-                System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + lastMove.substring(0,2));
 				System.out.println("It is now Player X's turn\n");
             }
             catch (IOException e) {
                 //Do nothing, probably
             }
         }
-        System.out.println(winString);
         System.out.println(gameBoard.toString());
+        System.out.println(winString);
+    }
+
+    private void playAI() {
+        String winString;
+        while (true) {
+            String comp1In = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, lastMove, true);
+            int x = Integer.parseInt(comp1In.substring(0,1));
+            int y = Integer.parseInt(comp1In.substring(1,2));
+            gameBoard.makeMove(PLAYER.X, x, y);
+            System.out.println(gameBoard.toString() + "\nPlayer X has taken cell " + comp1In.substring(0,2));
+            if (gameBoard.checkWin() == PLAYER.X) {
+                winString = ("\nAI 1 has won!");
+                break;
+            } else if(!playable()){
+                winString = ("\nThere are no more places available to play. It's a tie.");
+                break;
+            }
+            lastMove = comp1In;
+            comp1In = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, lastMove, true);
+            x = Integer.parseInt(comp1In.substring(0,1));
+            y = Integer.parseInt(comp1In.substring(1,2));
+            gameBoard.makeMove(PLAYER.O, x, y);
+            System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + comp1In.substring(0,2));
+            if (gameBoard.checkWin() == PLAYER.O) {
+                winString = ("\nAI 2 has won!");
+                break;
+            } else if(!playable()){
+                winString = ("\nThere are no more places available to play. It's a tie.");
+                break;
+            }
+            lastMove = comp1In;
+        }
+        System.out.println(gameBoard.toString());
+        System.out.println(winString);
     }
 
     //method for checking if there are any boards that have not been won/tied, if so, the current board is still playable
