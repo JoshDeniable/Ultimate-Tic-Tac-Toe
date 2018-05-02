@@ -13,6 +13,8 @@ public class PlayGame {
     private static BigBoard gameBoard;
     private static String lastMove;
     private static final int GLOBAL_DEPTH = 9; // Odd depths are better for good AI
+    private static final int AI1_DEPTH = 3;
+    private static final int AI2_DEPTH = 1;
     private static BufferedReader stdin = new BufferedReader (new InputStreamReader(System.in));
 
     //start the game by initializing the big board and last move
@@ -168,7 +170,7 @@ public class PlayGame {
 				int compX = Integer.parseInt(compIn.substring(0,1));
                 int compY = Integer.parseInt(compIn.substring(1,2));
                 gameBoard.makeMove(PLAYER.O, compX, compY);
-                System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + compIn.substring(0,2));
+                System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + compIn.substring(0,2) + "\n");
                 if (gameBoard.checkWin() == PLAYER.O) {
                     winString = ("\nYou have been defeated...");
                     break;
@@ -191,11 +193,13 @@ public class PlayGame {
     private void playAI() {
         String winString;
         while (true) {
-            String comp1In = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, lastMove, true);
+//            System.out.println(lastMove);
+            String comp1In = alphaBeta(AI1_DEPTH, -999999999, 999999999, lastMove, true);
+//            System.out.println(comp1In);
             int x = Integer.parseInt(comp1In.substring(0,1));
             int y = Integer.parseInt(comp1In.substring(1,2));
             gameBoard.makeMove(PLAYER.X, x, y);
-            System.out.println(gameBoard.toString() + "\nPlayer X has taken cell " + comp1In.substring(0,2));
+            System.out.println(gameBoard.toString() + "\nPlayer X has taken cell " + comp1In.substring(0,2) + "\n");
             if (gameBoard.checkWin() == PLAYER.X) {
                 winString = ("\nAI 1 has won!");
                 break;
@@ -204,11 +208,11 @@ public class PlayGame {
                 break;
             }
             lastMove = comp1In;
-            comp1In = alphaBeta(GLOBAL_DEPTH, -999999999, 999999999, lastMove, true);
+            comp1In = alphaBeta(AI2_DEPTH, -999999999, 999999999, lastMove, true);
             x = Integer.parseInt(comp1In.substring(0,1));
             y = Integer.parseInt(comp1In.substring(1,2));
             gameBoard.makeMove(PLAYER.O, x, y);
-            System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + comp1In.substring(0,2));
+            System.out.println(gameBoard.toString() + "\nPlayer O has taken cell " + comp1In.substring(0,2) + "\n");
             if (gameBoard.checkWin() == PLAYER.O) {
                 winString = ("\nAI 2 has won!");
                 break;
